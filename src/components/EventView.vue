@@ -51,7 +51,7 @@
                       :height='35'
                       class='d-inline-block mt-n5'
                       style='width: 70px'
-                      :items='Array(Math.min(event.avail - allincart + 1, 31)).fill().map((_, idx) => String(idx))' />
+                      :items='Array(Math.min(event.avail - allincart + 1, flags.maxTicketPurchase+1)).fill().map((_, idx) => String(idx))' />
                     <v-btn x-small outlined @click='add(p)'>Add To Cart</v-btn>
                   </span>
                   <v-btn v-else class='mb-3' x-small outlined>Sold Out</v-btn>
@@ -83,17 +83,17 @@
         <v-spacer />
         <v-btn v-if='flags.customCartBtn' text tile link height='59' @click='$emit("input", false); $emit("show-cart")'>
           Review and Checkout
-          <v-badge class='mr-4 mb-1'
+          <v-badge class='mr-4'
             overlap
             tile
             :value='true'
-            color='#f5f5f5'
+            color='success'
             offset-x='39'
             offset-y='14'>
             <template v-slot:badge>
-              <span class='blue-grey--text text--darken-1 title'>{{ total }}</span>
+              <span>{{ total }}</span>
             </template>
-            <v-icon style='font-family: "Material Icons Outlined"' size='55px'>shopping_cart</v-icon>
+            <v-icon large>shopping_cart</v-icon>
           </v-badge>
         </v-btn>
         <v-btn v-else x-large icon @click='$emit("input", false); $emit("show-cart")'>

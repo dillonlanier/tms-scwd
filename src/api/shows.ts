@@ -20,6 +20,7 @@ export interface RawShow {
   start: string;
   end: string;
   logoData?: string;
+  ticketsAvailable: number;
 }
 
 export class Show {
@@ -67,6 +68,10 @@ export class Show {
 
   public get price(): string {
     return this.show.price;
+  }
+
+  public get ticketsAvailable(): number {
+    return this.show.ticketsAvailable;
   }
 
   public sku(tkt: TicketType): string {

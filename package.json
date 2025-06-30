@@ -9,15 +9,21 @@
     "serve:princess": "vue-cli-service serve --mode princess",
     "serve:pride": "vue-cli-service serve --mode pride",
     "serve:spirit": "vue-cli-service serve --mode spirit",
+    "serve:spirit3": "vue-cli-service serve --mode spirit3",
     "serve:joe": "vue-cli-service serve --mode joe",
+    "serve:peconic": "vue-cli-service serve --mode peconic",
+    "serve:fishfinder": "vue-cli-service serve --mode fishfinder",
     "build": "vue-cli-service build --skip-plugins pwa,workbox",
     "lint": "vue-cli-service lint",
-    "build:lauralee": "vue-cli-service build --mode lauralee --dest dist_lauralee --skip-plugins pwa,workbox --target app",
+    "build:lauralee": "vue-cli-service build --mode lauraleeprod --dest dist_lauralee --skip-plugins pwa,workbox --target app",
     "build:sealwatching": "vue-cli-service build --mode sealwatchingprod --dest dist_sealwatching --skip-plugins pwa,workbox --target app",
     "build:princess": "vue-cli-service build --mode princessprod --dest dist_princess --skip-plugins pwa,workbox --target app",
     "build:pride": "vue-cli-service build --mode prideprod --dest dist_pride --skip-plugins pwa,workbox --target app",
     "build:spirit": "vue-cli-service build --mode spiritprod --dest dist_spirit --skip-plugins pwa,workbox --target app",
-    "build:joe": "vue-cli-service build --mode joeprod --dest dist_joe --skip-plugins pwa,workbox --target app"
+    "build:spirit3": "vue-cli-service build --mode spirit3prod --dest dist_spirit3 --skip-plugins pwa,workbox --target app",
+    "build:joe": "vue-cli-service build --mode joeprod --dest dist_joe --skip-plugins pwa,workbox --target app",
+    "build:peconic": "vue-cli-service build --mode peconicprod --dest dist_peconic --skip-plugins pwa,workbox --target app",
+    "build:fishfinder": "vue-cli-service build --mode fishfinderprod --dest dist_fishfinder --skip-plugins pwa,workbox --target app"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.22.4",

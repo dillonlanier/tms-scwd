@@ -1,3 +1,4 @@
+
 declare module 'vue-mobile-detection' {
   import { PluginObject } from 'vue';
   interface VueMobileDetection extends PluginObject<any> {}

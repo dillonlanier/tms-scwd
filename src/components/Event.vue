@@ -2,26 +2,44 @@
   <div class='event ma-auto align-center d-flex flex-row justify-space-around' :style='{fontSize: $isMobile() ? "10px" : undefined}'>
     <template v-if='!flags.useFish'>
       <template v-if='type === "month"'>
-        <span v-if='!event.cancelled' class='ma-auto text-left pl-1 flex-grow-1'>
-          {{ event.name }}<br />{{ getBoat(event.boatId).name }}
-        </span>
-        <span class='time ma-auto text-right pr-1 flex-grow-1' v-if='event.startTime'>
-          {{ [event.startTime, 'H:m'] | moment('h:mm A') }}
-          <template v-if='$vuetify.breakpoint.width < 1460'>
-            <span v-if='event.showTickets && !event.cancelled'><br />{{event.avail ? `${event.avail} Left` : 'Sold Out' }}</span>
-            <span v-else-if='event.cancelled'><br />Trip Cancelled</span>
+        <template v-if="flags.mobileTable && $vuetify.breakpoint.mobile">
+          <span :class='`pa-1 ${event.color} white--text flex-fill d-flex justify-space-around`'>
+            <span class='text-left pr-1' v-if="event.startTime && event.endTime">
+              {{ [event.startTime, 'H:m'] | moment('h:mm A') }} - {{ [event.endTime, 'H:m'] | moment('h:mm A') }}
+            </span>
+            <span class="text-center pl-1 pr-1">{{ event.name }}</span>
+            <span>{{ getBoat(event.boatId).name }}</span>
+            <span class="text-right pl-1 pr-1" v-if="event.cancelled">
+              Cancelled
+            </span>
+            <span class="text-right pl-1 pr-1" v-else-if="event.showTickets">{{ event.avail > 0 ? `${event.avail} Tickets Left` : `Sold Out` }}</span>
+            <span class="text-right pl-1 pr-1" v-else-if="flags.showSoldOutOverride && !event.avail">
+              Sold Out
+            </span>
+          </span>
+        </template>
+        <template v-else>
+          <span v-if='!event.cancelled' class='ma-auto text-left pl-1 flex-grow-1'>
+            {{ event.name }}<br />{{ getBoat(event.boatId).name }}
+          </span>
+          <span class='time ma-auto text-right pr-1 flex-grow-1' v-if='event.startTime'>
+            {{ [event.startTime, 'H:m'] | moment('h:mm A') }}
+            <template v-if='$vuetify.breakpoint.width < 1460'>
+              <span v-if='event.showTickets && !event.cancelled'><br />{{event.avail ? `${event.avail} Left` : 'Sold Out' }}</span>
+              <span v-else-if='event.cancelled'><br />Trip Cancelled</span>
+            </template>
+          </span>
+          <template v-if='$vuetify.breakpoint.width >= 1460'>
+            <span v-if='event.cancelled' class='text ma-auto text-right pr-4 flex-grow-1'>
+              Trip Cancelled
+            </span>
+            <span v-else-if='event.showTickets' class='text ma-auto text-right pr-4 flex-grow-1'>
+              {{ event.avail ? `${event.avail} Left` : 'Sold Out' }}
+            </span>
+            <span v-else-if='flags.showSoldOutOverride && !event.avail' class='text ma-auto text-right pr-4 flex-grow-1'>
+              Sold Out
+            </span>
           </template>
-        </span>
-        <template v-if='$vuetify.breakpoint.width >= 1460'>
-          <span v-if='event.cancelled' class='text ma-auto text-right pr-4 flex-grow-1'>
-            Trip Cancelled
-          </span>
-          <span v-else-if='event.showTickets' class='text ma-auto text-right pr-4 flex-grow-1'>
-            {{ event.avail ? `${event.avail} Left` : 'Sold Out' }}
-          </span>
-          <span v-else-if='flags.showSoldOutOverride && !event.avail' class='text ma-auto text-right pr-4 flex-grow-1'>
-            Sold Out
-          </span>
         </template>
       </template>
       <template v-else-if='type === "day"'>
@@ -76,7 +94,7 @@
         </span>
         <v-img v-if='event.fish.length && (!flags.showSoldOutOverride || event.avail)' :src='img' :aspect-ratio='width/height'
           class='align-self-center flex-grow-0 flex-shrink-0' contain
-          :width='$isMobile() ? 40 : 70' />
+          :width='$isMobile() ? 40 : 90' />
       </template>
 
     </template>
@@ -127,7 +145,7 @@ export default class Event extends Vue {
     console.log((!this.event.cancelled && this.event.fish.length) && (!this.flags.showSoldOutOverride || this.event.avail));
   }
 
-  public get img(): string {
+  public get img(): string {    
     return process.env.BASE_URL + 'img/' + FishToImg[this.event.fish].img;
   }
 

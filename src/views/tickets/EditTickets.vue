@@ -6,8 +6,7 @@
     <v-row>
       <v-col>
         <v-data-table
-          :items='trips'
-          hide-default-footer
+          :items='trips'          
           class='elevation-2'
           :headers='headers'>
           <template v-slot:top>

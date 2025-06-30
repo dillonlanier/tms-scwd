@@ -10,6 +10,7 @@ interface PInfo {
   boatId: number;
   type: string;
   stripeId?: string;
+  boatOverride: boolean;
 }
 
 export enum Fish {
@@ -27,12 +28,19 @@ export enum Fish {
   SeaBass22Hr = 'seabass22hours',
   SeaBassCod = 'seabasscod',
   SeaBassPorgie = 'seabassporgies',
+  SeaBassLing = 'seabassling',
   Fourth = 'fourth',
   BlackFish = 'tautog',
+  StriperBlackFish = 'striperblackfish',
+  Ling = 'ling-hake-red',
+  FlukeStriper = 'flukestripe',
+  Bonito = 'bonito',
+  StriperBonito = 'striperbonito',
+  FlukeBonito = 'flukebonito'
 }
 
 const lauraleeDisplay: {[key in Fish]: string} = {
-  'bluefish': 'Blue Fish',
+  'bluefish': 'Tuna',
   'codfish': 'CodFish',
   'cod-flounder': 'Cod Flounder',
   'seabass': 'Seabass',
@@ -48,10 +56,17 @@ const lauraleeDisplay: {[key in Fish]: string} = {
   'seabassporgies': 'SeaBass Porgie',
   'fourth': '4th Of July',
   'tautog': 'BlackFish',
+  'striperblackfish': 'StriperBlackFish',
+  'ling-hake-red': 'Ling',
+  'flukestripe': 'Fluke/Striper',
+  'seabassling': 'SeaBass Ling',
+  'bonito': 'Bonito',
+  'striperbonito': 'StriperBonito',
+  'flukebonito': 'FlukeBonito',
 };
 
 const princessDisplay: {[key in Fish]: string} = {
-  'bluefish': 'Blue Fish',
+  'bluefish': 'Tuna',
   'codfish': 'CodFish',
   'cod-flounder': 'Cod Flounder',
   'seabass': 'Seabass',
@@ -67,10 +82,17 @@ const princessDisplay: {[key in Fish]: string} = {
   'seabassporgies': 'SeaBass Porgie',
   'fourth': '4th Of July',
   'tautog': 'BlackFish',
+  'striperblackfish': 'StriperBlackFish',
+  'ling-hake-red': 'Ling',
+  'flukestripe': 'Fluke/Striper',
+  'seabassling': 'SeaBass Ling',
+  'bonito': 'Bonito',
+  'striperbonito': 'StriperBonito',
+  'flukebonito': 'FlukeBonito',
 };
 
 const lauralee: {[key in Fish]: {img: string, height: number, width: number}} = {
-  'bluefish': { img: 'bluefish.png', width: 70, height: 27 },
+  'bluefish': { img: 'bluefish.png', width: 90, height: 50 },
   'codfish': { img: 'codfish.png', width: 90, height: 36 },
   'cod-flounder': { img: 'cod-flounder.png', width: 86, height: 44 },
   'seabass': { img: 'sea-bass.png', width: 80, height: 45 },
@@ -86,10 +108,17 @@ const lauralee: {[key in Fish]: {img: string, height: number, width: number}} = 
   'fourth': { img: '4th-stretched.png', width: 90, height: 50 },
   'tautog': { img: 'tautog.png', width: 80, height: 42 },
   'striperblack': {img: 'striperblack.png', width: 80, height: 43},
+  'striperblackfish': {img: 'striperblackfish.png', width: 90, height: 41},
+  'ling-hake-red': {img: '640x427-Hake-Red.png', width: 90, height: 60},
+  'flukestripe': {img: 'flukestripe.png', width: 90, height: 42},
+  'seabassling': {img: 'sealingt.png', width: 90, height: 51},
+  'striperbonito': {img: 'new-fish/striperbonito.png', width: 90, height: 33},
+  'bonito': {img: 'new-fish/bonito.png', width: 90, height: 33},
+  'flukebonito': {img: 'new-fish/flukebonito.png', width: 90, height: 33}
 };
 
 const princess: {[key in Fish]: {img: string, height: number, width: number}} = {
-  'bluefish': { img: 'bluefish.png', width: 70, height: 27 },
+  'bluefish': { img: 'bluefish.png', width: 90, height: 50 },
   'codfish': { img: 'codfish.png', width: 90, height: 36 },
   'cod-flounder': { img: 'cod-flounder.png', width: 86, height: 44 },
   'seabass': { img: 'sea-bass.png', width: 80, height: 45 },
@@ -105,6 +134,13 @@ const princess: {[key in Fish]: {img: string, height: number, width: number}} = 
   'fourth': { img: '4th-stretched.png', width: 90, height: 50 },
   'tautog': { img: 'tautog.png', width: 80, height: 42 },
   'striperblack': {img: 'striperblack.png', width: 80, height: 43},
+  'striperblackfish': {img: 'striperblackfish.png', width: 90, height: 41},
+  'ling-hake-red': {img: '640x427-Hake-Red.png', width: 90, height: 60},
+  'flukestripe': {img: 'flukestripe.png', width: 90, height: 42},
+  'seabassling': {img: 'sealingt.png', width: 90, height: 51},
+  'striperbonito': {img: 'new-fish/striperbonito.png', width: 90, height: 33},
+  'bonito': {img: 'new-fish/bonito.png', width: 90, height: 33},
+  'flukebonito': {img: 'new-fish/flukebonito.png', width: 90, height: 33}
 };
 
 export const FishToImg = (process.env.VUE_APP_FISHES === 'lauralee') ? lauralee : princess;
@@ -123,6 +159,7 @@ export interface Schedule {
   start: string;
   end: string;
   selectedDays: number[];
+  showAll: boolean;
 }
 
 interface PData {

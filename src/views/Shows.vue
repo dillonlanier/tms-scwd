@@ -32,6 +32,9 @@
               <v-card-text>
                 <v-container>
                   <v-row class="mb-2">
+                    <v-col><p><strong>Tickets Available:</strong> {{ s.ticketsAvailable }}</p></v-col>
+                  </v-row>
+                  <v-row class="mb-2">
                     <v-col>
                       <v-dialog v-model='terms' width="600px">
                         <template v-slot:activator="{ on }">
@@ -60,6 +63,7 @@
                         dense
                         label="Quantity"
                         clearable
+                        v-on:click:clear="errormsg = ''"                        
                         v-model="quantities[k][idx]"
                         style="width: 150px; margin-top: -0.5em; margin-bottom: 0.5em"
                         :items="Array(30).fill(0).map((_, idx) => String(1 + idx))">
@@ -72,7 +76,7 @@
                       <strong>Total:</strong> {{ getTotal(idx) | money}}
                     </v-col>
                     <v-col>
-                      <paypal-checkout                                      
+                      <paypal-checkout v-if="!errormsg"                                     
                         class="checkout"
                         :style="{'width': '50%', 'margin': 'auto', 'visibility': getTotal(idx) === 0 ? 'hidden' : 'visible'}"
                         currency="USD"
@@ -84,6 +88,7 @@
                         :items="getItems(idx)"
                         :onDeclined="onDeclined"
                         :onError="errorHandler"
+                        :giftCard="null"
                         @paypal-approved="approved($event)"
                         @paypal-cancelled=""
                         @paypal-completed="onSuccess($event)"
@@ -282,9 +287,12 @@ export default class Shows extends Vue {
   public getItems(idx: number): Item[] {
     let out: Item[] = [];
     const c = this.getCategory(this.currentShows[idx].price)!;
+    const available = this.currentShows[idx].ticketsAvailable;
+    let total_quant = 0;
     for (const k of Object.keys(c.categories)) {
       const quant = this.quantities[k][idx];
       if (quant == 0) {continue;}
+      total_quant += Number(quant);
       out.push({
         name: `${k[0].toUpperCase() + k.slice(1)} Ticket for ${this.currentShows[idx].name}`,
         unit_amount: {currency_code: 'USD', value: c.categories[k]},
@@ -292,6 +300,13 @@ export default class Shows extends Vue {
         sku: this.currentShows[idx].sku(k as TicketType),
       });
     }
+
+    if (total_quant > available) {
+      this.errormsg = "cannot purchase more tickets than are available";
+      this.logErr(this.errormsg);
+      return [];
+    }
+
     return out;
   }
 

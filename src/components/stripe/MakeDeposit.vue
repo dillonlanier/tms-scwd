@@ -178,7 +178,7 @@ export default class MakeDeposit extends Vue {
   public get date(): moment.Moment { return moment(this.event.start, 'YYYY-MM-DD H:mm').startOf('day'); }
   public get tripTypes(): string[] { return ["Event", "Fishing"]; }
   public get maxPpl(): {[key: string]: number} { return {"Event": 110, "Fishing": 100}; }
-  public get tripLengths(): number[] { return [3, 4, 5, 6]; }
+  public get tripLengths(): number[] { return [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; }
 
   public selectedTime = '';
   public tripType = '';

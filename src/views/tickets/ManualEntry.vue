@@ -193,8 +193,8 @@ export default class ManualEntry extends Vue {
   public checkDate(date: string, onlyExist: boolean, func?: (p: Product, sc: Schedule) => void): boolean {
     let exist = false;
     const d = moment(date, 'YYYY-MM-DD');
-    for (const p of this.prods.filter((pr) => pr.publish)) {
-      const boat = this.boatByID(p.boatId);
+    for (const p of this.prods.filter((pr) => pr.publish && !pr.stripeId)) {
+      const boat = this.boatByID(p.boatId);      
       for (const sc of p.schedList) {
         const s = moment(sc.start).tz('America/New_York', true);
         const e = moment(sc.end).tz('America/New_York', true).hour(23).minutes(59);

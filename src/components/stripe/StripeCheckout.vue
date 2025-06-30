@@ -34,10 +34,9 @@
               </v-col>
               <v-col cols='6'>
                 <v-text-field
-                  :rules='[v => !!v || "Phone is required",
-                           v => /\(\d{3}\) \d{3} - \d{4}/.test(v) || "Phone number must be valid"]'
+                  :rules='[v => !v || /\(\d{3}\) \d{3} - \d{4}/.test(v) || "Phone number must be valid or empty"]'
                   v-mask='{mask: "phone", unmaskedVar: "unmaskedPhone"}' prepend-icon="phone"
-                  v-model='phone' label='Phone' required />
+                  v-model='phone' label='Phone' />
               </v-col>
             </v-row>
             <v-row>

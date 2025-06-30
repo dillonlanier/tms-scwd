@@ -61,6 +61,7 @@ export default class PaypalCheckout extends Vue {
   @Prop(Function) public readonly onClick!: (data: ClickData, actions: ClickActions) => void | Promise<void>;
   @Prop(Function) public readonly onError!: (err: Error) => void;
   @Prop(Function) public readonly onDeclined!: (err: ErrorDetails, actions: ApproveActions) => Promise<object>;
+  @Prop(Object) public readonly giftCard!: {id: string, balance: number} | null;
   @Action('cart/capture') public readonly capture!: (orderId: string) => Promise<Response>;
 
   public readonly intent = OrderIntent.CAPTURE;
@@ -71,6 +72,11 @@ export default class PaypalCheckout extends Vue {
     this.btnref = paypal.Buttons({
       enableStandardCardFields: false,
       createOrder: (data: object, actions: CreateActions): Promise<object> => {
+        let total = Number(this.amount);
+        if (this.giftCard !== null) {
+          total -= Number(this.giftCard.balance);
+        }
+
         return actions.order.create({
           intent: this.intent,
           application_context: this.context,
@@ -80,10 +86,14 @@ export default class PaypalCheckout extends Vue {
           purchase_units: [
             {
               payee: this.payee,
+              custom_id: this.giftCard !== null ? this.giftCard.id : undefined,              
               amount: {
-                value: this.amount, currency_code: this.currency,
+                value: total.toFixed(2), currency_code: this.currency,
                 breakdown: {
                   item_total: { value: this.amount, currency_code: this.currency },
+                  discount: this.giftCard !== null ? {
+                    value: this.giftCard.balance.toFixed(2), currency_code: this.currency,
+                  } : undefined,
                 },
               },
               description: this.description,

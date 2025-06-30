@@ -1,7 +1,8 @@
 <template>
-  <div :class='`event ma-auto align-center d-flex flex-row justify-space-around` + (reserved ? " blue darken-4 " : "")' 
+  <div :class='`event ma-auto align-center d-flex flex-row justify-space-around` + (reserved ? " black--text grey lighten-5 " : " light-blue ")' 
       :style='{fontSize: $isMobile() ? "10px" : undefined}'>
-    <span class=''>{{event.label}}<span v-if='reserved'> - Reserved</span></span>
+    <span class=''>{{event.label}}<span v-if='reserved'><br v-if="$isMobile()" />- Reserved</span><span v-else><br v-if="$isMobile()" /> Available</span>
+    </span>
   </div>
 </template>
 

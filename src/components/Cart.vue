@@ -32,10 +32,47 @@
           </template>
           <template v-slot:footer>
             <v-divider />
+            <!-- <span v-if="useGiftCard !== null" class="pl-3 pr-3 pb-2 success--text body-1">
+              Gift Card Added! Current Balance: ${{ useGiftCard.balance }}
+            </span> -->
+            <v-text-field v-if="flags.allowGiftCards && useGiftCard == null"
+              :error-messages='giftCardMessage !== "" ? giftCardMessage : undefined'
+              :success="useGiftCard !== null"
+              :readonly="useGiftCard !== null"
+              v-model="giftInput"
+              class="pl-3 pr-3 pb-2"
+              persistent-hint
+              type="text"
+              counter="22"
+              append-outer-icon="card_giftcard"
+              @click:append-outer="validateGiftCard()"
+              hint="Gift Card codes are case sensitive. Click the icon on the right to validate."
+              label="Use Gift Card Code" />
+            <v-divider />
+            <div v-if="serviceFee > 0" class="d-flex flex-row-reverse">
+              <p class="mr-2 mb-0">
+                <strong class="pr-2">Subtotal:</strong>
+                <animated-number :value="subtotal" :format='(val) => "$" + Number(val).toFixed(2)' />
+              </p>
+            </div>            
+            <v-divider />
+            <div v-if="serviceFee > 0" class='d-flex flex-row-reverse'>
+              <p class='mr-2 mb-0'>
+                <strong class="pr-2">Service Fee:</strong>
+                <animated-number :value='serviceFee' :format='(val) => "$" + Number(val).toFixed(2)' />
+              </p>
+            </div>
+            <v-divider v-if="useGiftCard !== null" />
+            <div v-if="useGiftCard !== null" class="success--text d-flex flex-row-reverse">
+              <p class="mr-2 mb-0">
+                <strong class="pr-2">Gift Card:</strong>
+                <animated-number :value="useGiftCard.balance" :format="(val) => '$' + Number(val).toFixed(2)" />
+              </p>
+            </div>
             <div class='d-flex flex-row-reverse'>
               <p class='mr-2 mb-0'>
                 <strong class='pr-2'>Total:</strong>
-                <animated-number :value='subtotal' :format='(val) => "$" + Number(val).toFixed(2)' />
+                <animated-number :value='subtotal + serviceFee - ((useGiftCard !== null) ? useGiftCard.balance : 0)' :format='(val) => "$" + Number(val).toFixed(2)' />
               </p>
             </div>
           </template>
@@ -75,9 +112,9 @@
             class='checkout'
             :style='{"width": flags.verticalPaypal ? "50%" : undefined, "margin": flags.verticalPaypal ? "auto": undefined}'
             :key='btnrender'
-            :items='items.filter((i) => i.item.quantity > 0).map((i) => i.item)'
+            :items='fullItems'
             currency='USD'
-            :amount='subtotal.toFixed(2)'
+            :amount='(subtotal + serviceFee).toFixed(2)'
             :context='appcontext'
             :payee='payee'
             description='Ticket Purchase'
@@ -86,6 +123,7 @@
             :onError='errorHandler'
             :onInit='checkinit'
             :onDeclined='onDeclined'
+            :giftCard='useGiftCard'
             @paypal-approved='approved($event)'
             @paypal-cancelled='$emit("checkout-cancelled", $event)'
             @paypal-completed='succeeded($event)'
@@ -146,6 +184,7 @@
 import { Component, Vue, PropSync, Watch, Emit, Inject } from 'vue-property-decorator';
 import { Getter, Mutation, Action } from 'vuex-class';
 // import { CartItem } from '@/store/states';
+import { Item } from '@/api/paypal';
 import TicketCategory, { CartItem } from '@/api/tickets';
 import PaypalCheckout, { ApproveActions } from '@/components/PayPalCheckout.vue';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
@@ -162,6 +201,14 @@ import { CalFeatureFlags } from '../api/utils';
 interface MerchantInfo {
   merchant_id: string;
   email_address: string;
+}
+
+function toNumList(arg: string | number[]): number[] {
+  if (typeof arg === 'string') {
+    return arg.split(',').map(Number);
+  }
+
+  return arg;
 }
 
 @Component({
@@ -191,6 +238,8 @@ export default class Cart extends Vue {
   @Mutation('logError') public logErr!: (err: any) => void;
   @Getter('config') public readonly config!: Config;
   @Action('loadConfig') public loadConfig!: () => Promise<void>;
+  @Action('tickets/validateGiftcard') public readonly validateCard!: 
+    (id: string) => Promise<Response>;
   @Inject() public readonly flags!: CalFeatureFlags;
 
   public headers = [
@@ -210,6 +259,10 @@ export default class Cart extends Vue {
   public prom: null | ((value?: boolean) => void) = null;
   public paypalDecline = false;
   public declineText = '';
+  private giftInput = '';
+
+  private useGiftCard: {id: string, initial: string, balance: number} | null = null;
+  private giftCardMessage = '';
 
   public readonly appcontext = {
     shipping_preference: ShippingPreference.NO_SHIPPING,
@@ -219,6 +272,7 @@ export default class Cart extends Vue {
     },
   };
 
+  public readonly useServiceFee = toNumList(process.env.VUE_APP_USE_SERVICE_FEE || '[]');
 
   public get payee(): MerchantInfo {
     return process.env.VUE_APP_PAYPAL_ENV === 'LIVE'
@@ -306,6 +360,25 @@ export default class Cart extends Vue {
     return ret;
   }
 
+  public get fullItems(): Item[] {
+    let itemlist = this.items.filter((i) => Number(i.item.quantity) > 0).map((i) => i.item);
+    if (this.serviceFee > 0) {
+      itemlist.push({
+        name: "Service Fee",
+        unit_amount: {currency_code: "USD", value: this.serviceFee.toFixed(2)},
+        quantity: "1",
+        sku: "SVCFEE",
+      });
+    }
+    return itemlist;
+  }
+
+  public get serviceFee(): number {
+    return this.items.filter((i) => this.useServiceFee.includes(i.event.boatId)).reduce((total, curr) => {
+      return total + Number(curr.item.unit_amount.value) * Number(curr.item.quantity);
+    }, 0) * 0.039;
+  }
+
   public get subtotal(): number {
     return this.items.reduce((total, curr) => {
       return total + Number(curr.item.unit_amount.value) * Number(curr.item.quantity);
@@ -323,6 +396,24 @@ export default class Cart extends Vue {
         return 0;
       }
     });
+  }
+
+  public async validateGiftCard(): Promise<boolean> {
+    const resp = await this.validateCard(this.giftInput);
+    if (resp.ok) {
+      const giftcard = await resp.json();
+      if (giftcard.balance <= 0) {
+        this.giftCardMessage = 'You have no balance on your giftcard left and thus cannot use it.';        
+      } else if (giftcard.balance > this.subtotal) {
+        this.giftCardMessage = 'Must use entire giftcard balance at one shot. Total must be greater than giftcard.';
+      } else {
+        this.useGiftCard = giftcard;
+        return true;
+      }
+    } else {
+      this.giftCardMessage = 'Gift Card Code not found!';
+    }
+    return false;
   }
 
   @Watch('show')

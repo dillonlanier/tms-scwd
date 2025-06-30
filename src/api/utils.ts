@@ -41,9 +41,11 @@ export interface CalFeatureFlags {
   readonly verticalPaypal: boolean;
   readonly customCheckout: string;
   readonly paymentHandler: PaymentHandler;
-  readonly boatFilterID: number | null;
+  readonly boatFilterID: number[];
   readonly showSoldOutOverride: boolean;
   readonly mobileTable: boolean;
+  readonly maxTicketPurchase: number;
+  readonly allowGiftCards: boolean;
 }
 
 export function timeToMoment(day: moment.Moment, time: string): moment.Moment {
@@ -125,7 +127,9 @@ export function getDepositEvents(start: moment.Moment, end: moment.Moment, prods
     } else {
       existing.set(dep.metadata.date, [obj]);
     }
-  }  
+  } 
+  
+  console.log(existing);
 
   let events: DepositEvent[] = [];
   for (const p of prods.filter((pr) => (pr.publish) && pr.type === 'stripe')) {
@@ -150,7 +154,7 @@ export function getDepositEvents(start: moment.Moment, end: moment.Moment, prods
           continue;
         }
 
-        let times = sc.times.sort();
+        let times = sc.times.sort();        
         let first: moment.Moment | null = null;
         if (existing.has(d.format('YYYY-MM-DD'))) {
           const current = existing.get(d.format('YYYY-MM-DD'))!;          
@@ -159,8 +163,8 @@ export function getDepositEvents(start: moment.Moment, end: moment.Moment, prods
 
           for (const c of current) {
             times = times.filter((v) => {
-              const t = moment(c.time, 'H:m');
-              return !moment(v, 'H:m').isBetween(t, t.clone().add(c.length+0.5, 'h'), undefined , '[)');
+              const t = moment(c.time, 'H:m');              
+              return !moment(v, 'H:m').isBetween(t.clone().subtract(3, 'h'), t.clone().add(c.length+0.5, 'h'), undefined , '[)');
             });
           }
         }

@@ -61,8 +61,8 @@
               :first-interval='firstInterval'
               :interval-count='25-firstInterval'
               :events='events'
-              :event-color='undefined'
-              :event-text-color='flags.useFish ? "black" : undefined'
+              :event-color='getEventColor'
+              :event-text-color='flags.useFish ? "black" : "white"'
               :show-interval-label='showIntervalLabel'
               :interval-format='intervalFormat'
               @click:date='viewDay'
@@ -158,6 +158,14 @@ function toBool(arg: string | boolean): boolean {
   return arg;
 }
 
+function toNumList(arg: string | number[]): number[] {
+  if (typeof arg === 'string') {    
+    return arg.split(',').map(Number);
+  }
+
+  return arg;
+}
+
 function eventReserved(ev: DepositEvent): boolean {
   if (ev.times.length === 0) {
     return true;
@@ -166,7 +174,7 @@ function eventReserved(ev: DepositEvent): boolean {
   if (!ev.firstOfDay) {
     return false;
   }
-
+  
   return ev.times.filter((v) => {
     let m = moment(v, 'H:m');
     return !m.isBetween(ev.firstOfDay!.clone().subtract(4, 'h'), ev.firstOfDay, undefined, '()');
@@ -219,9 +227,11 @@ export default class Calendar extends Vue {
     customCheckout: process.env.VUE_APP_CUSTOM_POST_CHECKOUT || 'basic-checked-out',
     paymentHandler: process.env.VUE_APP_PAYMENT_HANDLER ?
       process.env.VUE_APP_PAYMENT_HANDLER as PaymentHandler : PaymentHandler.PAYPAL,
-    boatFilterID: Number(process.env.VUE_APP_BOAT_FILTER) || null,
+    boatFilterID: toNumList(process.env.VUE_APP_BOAT_FILTER || []),
     showSoldOutOverride: toBool(process.env.VUE_APP_SHOW_SOLD_OUT || false),
     mobileTable: toBool(process.env.VUE_APP_MOBILE_TABLE || false),
+    maxTicketPurchase: Number(process.env.VUE_APP_MAX_TICKET_PURCHASE) || 30,
+    allowGiftCards: toBool(process.env.VUE_APP_ALLOW_GIFT_CARDS || false),
   };
 
   public readonly calendarHeight = process.env.VUE_APP_CALENDAR_HEIGHT;
@@ -365,8 +375,20 @@ export default class Calendar extends Vue {
   }
 
   public get prods(): Product[] {
-    if (this.flags.boatFilterID !== null) {
-      return this.prodlist.filter((p) => p.boatId === this.flags.boatFilterID);
+    if (this.flags.boatFilterID.length > 0) {
+      const res: Product[] = [];
+      this.prodlist.forEach((p) => {
+        if (p.boatOverride || this.flags.boatFilterID.includes(p.boatId)) {
+          res.push(p);
+          return;
+        }
+
+        p.schedList = p.schedList.filter((sched) => sched.showAll);
+        if (p.schedList.length > 0) {
+          res.push(p);
+        }
+      });
+      return res;
     }
 
     return this.prodlist;
@@ -506,7 +528,8 @@ export default class Calendar extends Vue {
   }
 
   public getEventColor(ei: EventInfo): string {
-    return 'white'; // return ei.color;
+    return ei.color;
+    // return 'white'; // return ei.color;
   }
 
   public getEventName(ei: EventInfo): string {
@@ -519,7 +542,7 @@ export default class Calendar extends Vue {
     const curmonth = moment().month();
     this.monthList = getMonths(this.prods).filter((m) => m >= curmonth);
 
-    const current = moment().add(Number(process.env.VUE_APP_TRIP_REMOVAL_MINS) || 60, 'minutes');
+    const current = moment().add(Number(process.env.VUE_APP_TRIP_REMOVAL_MINS) || 30, 'minutes');
 
     const min = moment(new Date(`${arg.start.date}T00:00:00`)).tz('America/New_York', true);
     const max = moment(new Date(`${arg.end.date}T23:59:59`)).tz('America/New_York', true);
@@ -541,7 +564,7 @@ export default class Calendar extends Vue {
 
     const curDeposits = await this.searchDeposits(arg.start.year + '-' + String(arg.start.month).padStart(2, '0'));
 
-    const depositEvents = getDepositEvents(min, max, this.prods, curDeposits).filter((e) => {
+    const depositEvents = getDepositEvents(min, max, this.prods, curDeposits).filter((e) => {      
       const start = moment(e.start, 'YYYY-MM-DD H:mm').tz('America/New_York', true);
       return !start.isSameOrBefore(current) && !start.isAfter(max);
     });

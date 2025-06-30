@@ -28,8 +28,8 @@
                     item-text='name'
                     item-value='id'
                     v-model='boatId' />
-                </v-col>
-                <v-col cols="4" md="2">
+                </v-col>              
+                <v-col cols="2" md="2">
                   <v-select label='Color'
                     :items='colorOpts'
                     v-model='color' />
@@ -146,6 +146,7 @@ export default class ProductForm extends Vue {
   public publish = false;
   public showTickets = false;
   public valid = true;
+  public boatOverride = false;
   public schedList: Schedule[] = [];
   public fish: Fish = Fish.Fluke;
   public type: string = '';
@@ -198,8 +199,8 @@ export default class ProductForm extends Vue {
 
   public async save() {
     if ((this.$refs.form as HTMLFormElement).validate() && this.validateSchedList()) {
-      const {id, name, desc, publish, color, showTickets, schedList, fish, boatId, type} = this;
-      this.saveProduct({id, name, desc, color, publish, showTickets, schedList, fish, boatId, type});
+      const {id, name, desc, publish, color, showTickets, schedList, fish, boatId, type, boatOverride} = this;
+      this.saveProduct({id, name, desc, color, publish, showTickets, schedList, fish, boatId, type, boatOverride});
       this.$router.push({name: 'home'});
     }
   }
@@ -214,6 +215,7 @@ export default class ProductForm extends Vue {
       end: end.toISOString().substr(0, 10),
       selectedDays: [],
       ticketsAvail: 50,
+      showAll: false,
     });
   }
 

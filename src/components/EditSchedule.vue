@@ -1,13 +1,16 @@
 <template>
   <v-container>
     <v-row>
+      <v-col md="2" class="mt-n3">
+        <v-switch label="Show on All Calendars" v-model="sched.showAll" />
+      </v-col>
       <v-col md="2" class='mt-n3'>
         <date-input include-year v-model='sched.start' label='Start' :max='sched.end' />
       </v-col>
-      <v-col offset-md="1" md="2" class='mt-n3'>
+      <v-col md="2" class='mt-n3'>
         <date-input include-year v-model='sched.end' label='End' :min='sched.start' />
       </v-col>
-      <v-col offset-md="1" md="6">
+      <v-col offset-md="1" md="5">
         <v-select v-model='dayArray' :items='days' dense
           :rules='[(v) => v.length > 0 || "Must choose at least one day"]'
           label='Days' multiple chips hint='Choose days of the week'

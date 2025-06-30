@@ -70,7 +70,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col offset="1" cols="8">
+          <v-col offset="1" cols="3">
             <v-file-input
               accept="image/*"
               dense
@@ -80,6 +80,14 @@
               truncate-length="30"
             ></v-file-input>
             <p><img v-if="logoDataUrl" height="250" :src="logoDataUrl" /></p>
+          </v-col>
+          <v-col offset="1" cols="5">
+            <v-slider class="align-center" hide-details v-model="ticketsAvailable"
+              :min='1' :max='150' label="Tickets Available">
+              <template v-slot:append>
+                <v-text-field style='width: 50px' class="mt-0 pt-0" single-line hide-details v-model="ticketsAvailable" type="number" />
+              </template>
+            </v-slider>
           </v-col>
         </v-row>
         <v-card-actions>
@@ -128,6 +136,7 @@ export default class ShowForm extends Vue {
   public dateRange : string[] = [];
   public price = '';
   public logo: File[] = [];
+  public ticketsAvailable = 0;
 
   public readonly reader = new FileReader();
   public logoDataUrl = '';
@@ -175,8 +184,8 @@ export default class ShowForm extends Vue {
       return;
     }
 
-    const {id, name, publish, desc, price, dateRange} = this;
-    await this.saveShow(new Show({id, name, publish, desc, price, dateRange, start: '', end: '', logoData: this.logoDataUrl}));
+    const {id, name, publish, desc, price, dateRange, ticketsAvailable} = this;
+    await this.saveShow(new Show({id, name, publish, desc, price, dateRange, start: '', end: '', logoData: this.logoDataUrl, ticketsAvailable}));
     this.$router.push({name: 'home'});
   }
 
@@ -187,6 +196,7 @@ export default class ShowForm extends Vue {
     this.dateRange = [s.startDate.format('YYYY-MM-DD'), s.endDate.format('YYYY-MM-DD')];    
     this.price = s.price;
     this.logoDataUrl = s.logoData;
+    this.ticketsAvailable = s.ticketsAvailable;
   }
 
   private validate(): boolean {

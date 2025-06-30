@@ -7,10 +7,28 @@
     </v-row>
     <v-row>
       <v-col cols="12">
+        <v-form ref="form" v-model="valid" lazy-validation>
         <v-card class='elevation-2'>
           <v-card-title>Add New Deposit</v-card-title>
           <v-card-text>
             <v-container fluid>
+              <v-row>
+                <v-col cols="3">
+                  <v-text-field label="Name" v-model="newname"
+                    required :rules="[required]" />
+                </v-col>
+                <v-col cols="3">
+                  <v-text-field
+                    :rules="[v => (/.+@.+\..+/.test(v)) || 'Email address must be valid']"
+                    v-model="newemail" prepend-icon="email" label="Email" required />
+                </v-col>
+                <v-col cols="3">
+                  <v-text-field
+                       :rules='[v => (/\(\d{3}\) \d{3} - \d{4}/.test(v)) || "Phone number must be valid"]'
+                        v-mask='{mask: "phone", unmaskedVar: "unmaskedPhone"}' prepend-icon="phone"
+                        v-model='phone' label='Phone' required />
+                </v-col>
+              </v-row>
               <v-row>
                 <v-col cols='3'>
                 <date-input 
@@ -40,6 +58,7 @@
             </v-card-actions>
           </v-card-text>
         </v-card>
+      </v-form>
       </v-col>
     </v-row>
     <v-row>
@@ -61,7 +80,15 @@
               <template v-slot:item.length='{item}'>
                 {{item.length}} Hours
               </template>
-
+              <template v-slot:item.name="{item}">
+                {{ item.name }}
+              </template>
+              <template v-slot:item.email="{item}">
+                {{ item.email }}
+              </template>
+              <template v-slot:item.phone="{item}">
+                {{ item.phone }}
+              </template>
               <template v-slot:item.remove='{item}'>
                 <v-btn icon @click='remove(item)'><v-icon>delete</v-icon></v-btn>
               </template>
@@ -74,19 +101,26 @@
 </template>
 
 <script lang='ts'>
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Ref } from 'vue-property-decorator';
 import { Action } from 'vuex-class';
 import DateInput from '@/components/DateInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
+import { mask } from '@titou10/v-mask';
 
 interface ManualDep {
   id: number;
   date: string;
   time: string;
   length: number;
+  name: string;
+  email: string;
+  phone: string;
 }
 
 @Component({
+  directives: {
+    mask,
+  },
   components:{
     DateInput,
     TimeInput,
@@ -96,6 +130,7 @@ export default class ManualDeposit extends Vue {
   @Action('product/saveManualDeposit') public save!: (req: ManualDep) => void;
   @Action('product/deleteManualDeposit') public delete!: (req: ManualDep) => void;
   @Action('product/listManualDeposits') public list!: () => Promise<ManualDep[]>;
+  @Ref('form') public form!: HTMLFormElement;
 
   public manualdeps: ManualDep[] = [];
   public loading = true;
@@ -105,6 +140,11 @@ export default class ManualDeposit extends Vue {
   public timeError: string | null = null;
   public newlength = 3;
   public lengthError: string | null = null;
+  public newname = '';
+  public newemail = '';
+  public phone = '';
+  public unmaskedPhone = '';
+  public valid = true;
 
   public readonly required = (v: string) => !!v || 'Required Field';
 
@@ -112,10 +152,17 @@ export default class ManualDeposit extends Vue {
     {text: 'Date', value: 'date'},
     {text: 'Time', value: 'time'},
     {text: 'Trip Length', value: 'length'},
+    {text: 'Name', value: 'name'},
+    {text: 'Phone', value: 'phone'},
+    {text: 'Email', value: 'email'},
     {text: '', value: 'remove'},
   ];
 
   public async add() {
+    if (!this.form.validate()) {
+      return;
+    }
+
     if (this.newdate == '') {
       this.dateError = 'Date cannot be empty';
       return;
@@ -135,9 +182,11 @@ export default class ManualDeposit extends Vue {
       date: this.newdate,
       time: this.newtime,
       length: Number(this.newlength),
+      name: this.newname,
+      email: this.newemail,
+      phone: this.unmaskedPhone,
     });
-    this.newdate = '';
-    this.newtime = '';
+    this.form.reset();
     this.manualdeps = await this.list();
     this.loading = false;
   }
