@@ -11,11 +11,6 @@
         Today
       </v-btn>
 
-      <v-btn v-if='flags.nextYearBtn' @click='$emit("click:year")' class='ml-2'
-        outlined color='grey darken-2'>
-        Next Year
-      </v-btn>
-
       <v-spacer />
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-badge v-if='flags.cartBtn' class='mr-7' :content='total' :value='total'>
@@ -37,6 +32,11 @@
         </v-list>
       </v-menu>
 
+      <v-btn v-if='flags.nextYearBtn' @click='$emit("click:year")' class='ml-2'
+        outlined color='grey darken-2'>
+        Next Year
+      </v-btn>
+      
       <v-btn outlined color='grey darken-2' @click='calendar.next()'>
         Next <v-icon>keyboard_arrow_right</v-icon>
       </v-btn>
