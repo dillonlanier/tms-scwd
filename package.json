@@ -16,6 +16,7 @@
     "build": "vue-cli-service build --skip-plugins pwa,workbox",
     "lint": "vue-cli-service lint",
     "build:lauralee": "vue-cli-service build --mode lauraleeprod --dest dist_lauralee --skip-plugins pwa,workbox --target app",
+    "build:test": "vue-cli-service build --mode testlocal --dest dist_testlocal --skip-plugins pwa,workbox --target app",
     "build:sealwatching": "vue-cli-service build --mode sealwatchingprod --dest dist_sealwatching --skip-plugins pwa,workbox --target app",
     "build:princess": "vue-cli-service build --mode princessprod --dest dist_princess --skip-plugins pwa,workbox --target app",
     "build:pride": "vue-cli-service build --mode prideprod --dest dist_pride --skip-plugins pwa,workbox --target app",

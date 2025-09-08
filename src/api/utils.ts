@@ -27,6 +27,7 @@ export interface AdminFeatureFlags {
 }
 
 export interface CalFeatureFlags {
+  readonly nextYearBtn: boolean;
   readonly todayBtn: boolean;
   readonly bgcolor: string;
   readonly calColorProp: string;

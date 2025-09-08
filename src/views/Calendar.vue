@@ -20,6 +20,7 @@
             @click:month='setMonth'
             @click:cart='showCart = true'
             @click:view='type = $event'
+            @click:year='setYear'
             :type='type'
           />
 
@@ -212,6 +213,7 @@ export default class Calendar extends Vue {
   @Action('cart/getStripeSession') public getStripeSession!: (id: string) => Promise<Response>;
   @Ref('calendar') public readonly calendar!: Cal;
   @Provide() public readonly flags: CalFeatureFlags = {
+    nextYearBtn: toBool(process.env.VUE_APP_NEXT_YEAR || false),
     todayBtn: toBool(process.env.VUE_APP_TODAY || true),
     bgcolor: process.env.VUE_APP_CALENDAR_BG || 'FFFFFF',
     calColorProp: process.env.VUE_APP_CALENDAR_COLOR_PROP || 'primary',
@@ -343,6 +345,12 @@ export default class Calendar extends Vue {
       payer: {email_address: '', name: {given_name: '', surname: ''} },
     };
     this.success = true;
+  }
+
+  public setYear() {
+    const newDate = moment().month(4);
+    newDate.add(1, 'year');
+    this.focus = newDate.format('YYYY-MM-DD');
   }
 
   public setMonth(month: number) {

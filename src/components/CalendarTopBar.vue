@@ -11,6 +11,11 @@
         Today
       </v-btn>
 
+      <v-btn v-if='flags.nextYearBtn' @click='$emit("click:year")' class='ml-2'
+        outlined color='grey darken-2'>
+        Next Year
+      </v-btn>
+
       <v-spacer />
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-badge v-if='flags.cartBtn' class='mr-7' :content='total' :value='total'>
