@@ -32,7 +32,7 @@
         </v-list>
       </v-menu>
 
-      <v-btn v-if='flags.nextYearBtn' @click='$emit("click:year")' class='ml-2'
+      <v-btn v-if='flags.nextYearBtn' @click='$emit("click:year")' class='mr-2'
         outlined color='grey darken-2'>
         Next Year
       </v-btn>

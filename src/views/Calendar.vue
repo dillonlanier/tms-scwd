@@ -348,7 +348,7 @@ export default class Calendar extends Vue {
   }
 
   public setYear() {
-    const newDate = moment().month(4);
+    const newDate = moment().month(3);
     newDate.add(1, 'year');
     this.focus = newDate.format('YYYY-MM-DD');
   }
