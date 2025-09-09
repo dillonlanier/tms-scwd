@@ -4,6 +4,7 @@ const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const MomentTimezoneDataPlugin = require('moment-timezone-data-webpack-plugin');
 
 module.exports = {
+  //filenameHashing: false,
   css: {
     extract: process.env.NODE_ENV === 'production' ? {
       ignoreOrder: true,

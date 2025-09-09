@@ -177,7 +177,7 @@ export default class MakeDeposit extends Vue {
 
   public get date(): moment.Moment { return moment(this.event.start, 'YYYY-MM-DD H:mm').startOf('day'); }
   public get tripTypes(): string[] { return ["Event", "Fishing"]; }
-  public get maxPpl(): {[key: string]: number} { return {"Event": process.env.VUE_APP_MAX_TICKET_PURCHASE, "Fishing": process.env.VUE_APP_MAX_TICKET_PURCHASE}; }
+  public get maxPpl(): {[key: string]: number} { return {"Event": Number(process.env.VUE_APP_MAX_TICKET_PURCHASE) || 110, "Fishing": Number(process.env.VUE_APP_MAX_TICKET_PURCHASE) || 110}; }
   public get tripLengths(): number[] { return [4, 5, 6, 7, 8, 9, 10, 11, 12]; }
 
   public selectedTime = '';
