@@ -232,7 +232,7 @@ export default class Calendar extends Vue {
     boatFilterID: toNumList(process.env.VUE_APP_BOAT_FILTER || []),
     showSoldOutOverride: toBool(process.env.VUE_APP_SHOW_SOLD_OUT || false),
     mobileTable: toBool(process.env.VUE_APP_MOBILE_TABLE || false),
-    maxTicketPurchase: Number(process.env.VUE_APP_MAX_TICKET_PURCHASE) || 30,
+    maxTicketPurchase: Number(process.env.VUE_APP_MAX_TICKET_PURCHASE) || 110,
     allowGiftCards: toBool(process.env.VUE_APP_ALLOW_GIFT_CARDS || false),
   };
 
