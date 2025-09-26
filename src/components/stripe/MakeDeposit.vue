@@ -178,11 +178,11 @@ export default class MakeDeposit extends Vue {
   public get date(): moment.Moment { return moment(this.event.start, 'YYYY-MM-DD H:mm').startOf('day'); }
   public get tripTypes(): string[] { return ["Event", "Fishing"]; }
   public get maxPpl(): {[key: string]: number} { return {"Event": Number(process.env.VUE_APP_MAX_TICKET_PURCHASE) || 110, "Fishing": Number(process.env.VUE_APP_MAX_TICKET_PURCHASE) || 110}; }
-  public get tripLengths(): number[] { return [4, 5, 6, 7, 8, 9, 10, 11, 12]; }
+  public get tripLengths(): number[] { return [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; }
 
   public selectedTime = '';
   public tripType = '';
-  public tripLength = 4;
+  public tripLength = 3;
   public checkoutDlg = false;
   public estimated = '1';
 
@@ -196,7 +196,7 @@ export default class MakeDeposit extends Vue {
   @Watch('selectedTime')
   public onChangeTime(newVal: string, oldVal: string) {
     if (!this.validLength(this.tripLength+0.5)) {
-      this.tripLength = 4;
+      this.tripLength = 3;
     }
   }
 
