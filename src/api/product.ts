@@ -219,6 +219,7 @@ export interface DepositEvent {
   minimum: number;
   label: string;
   firstOfDay: moment.Moment | null;
+  intervals: { start: moment.Moment; end: moment.Moment }[];
 }
 
 export function getBoatsReq(): Request {

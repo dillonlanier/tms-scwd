@@ -157,10 +157,18 @@ export function getDepositEvents(start: moment.Moment, end: moment.Moment, prods
 
         let times = sc.times.sort();        
         let first: moment.Moment | null = null;
+        let intervals: { start: moment.Moment; end: moment.Moment }[] = [];
         if (existing.has(d.format('YYYY-MM-DD'))) {
           const current = existing.get(d.format('YYYY-MM-DD'))!;          
           current.sort((a, b) => a.time < b.time ? -1 : a.time > b.time ? 1 : 0);
           first = moment(current[0].time, 'H:m');
+
+          // NEW: build real intervals
+          intervals = current.map(c => {
+            const start = moment(c.time, 'H:m');
+            const end = start.clone().add(Number(c.length), 'h');
+            return { start, end };
+          });
 
           for (const c of current) {
             times = times.filter((v) => {
@@ -189,6 +197,7 @@ export function getDepositEvents(start: moment.Moment, end: moment.Moment, prods
             start: d.format('YYYY-MM-DD'),
             label: labels[idx],
             firstOfDay: first,
+            intervals,
           });          
         });
       }

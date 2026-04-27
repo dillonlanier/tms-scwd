@@ -201,14 +201,28 @@ export default class MakeDeposit extends Vue {
   }
 
   public validLength(t: number): boolean {
-    if (!this.event.firstOfDay) {
+    if (!this.selectedTime) return true;
+    const start = moment(this.selectedTime, 'H:mm');
+    const end = start.clone().add(t, 'h');
+    if (!this.event.intervals || this.event.intervals.length === 0) {
       return true;
     }
-
-    let m = moment(this.selectedTime, 'H:mm');
-    if (m.isAfter(this.event.firstOfDay)) { return true; }
-    m.add(t, 'h');
-    return m.isBefore(this.event.firstOfDay);
+    // check overlap with ANY existing booking
+    for (const i of this.event.intervals) {
+      const overlaps =
+        start.isBefore(i.end) && end.isAfter(i.start);
+      if (overlaps) {
+        return false;
+      }
+    }
+    return true;
+    // let start = moment(this.selectedTime, 'H:mm');
+    // if (!this.event.firstOfDay) {
+    //   return true;
+    // }
+    // if (start.isAfter(this.event.firstOfDay)) { return true; }
+    // start.add(t, 'h');
+    // return start.isBefore(this.event.firstOfDay);
   }
 
   public validTime(t: string): boolean {
