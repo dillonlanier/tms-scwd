@@ -36,7 +36,8 @@ export enum Fish {
   FlukeStriper = 'flukestripe',
   Bonito = 'bonito',
   StriperBonito = 'striperbonito',
-  FlukeBonito = 'flukebonito'
+  FlukeBonito = 'flukebonito',
+  Squid = 'squid'
 }
 
 const lauraleeDisplay: {[key in Fish]: string} = {
@@ -63,6 +64,7 @@ const lauraleeDisplay: {[key in Fish]: string} = {
   'bonito': 'Bonito',
   'striperbonito': 'StriperBonito',
   'flukebonito': 'FlukeBonito',
+  'squid': 'Squid'
 };
 
 const princessDisplay: {[key in Fish]: string} = {
@@ -89,6 +91,7 @@ const princessDisplay: {[key in Fish]: string} = {
   'bonito': 'Bonito',
   'striperbonito': 'StriperBonito',
   'flukebonito': 'FlukeBonito',
+  'squid': 'Squid'
 };
 
 const lauralee: {[key in Fish]: {img: string, height: number, width: number}} = {
@@ -114,7 +117,8 @@ const lauralee: {[key in Fish]: {img: string, height: number, width: number}} = 
   'seabassling': {img: 'sealingt.png', width: 90, height: 51},
   'striperbonito': {img: 'new-fish/striperbonito.png', width: 90, height: 33},
   'bonito': {img: 'new-fish/bonito.png', width: 90, height: 33},
-  'flukebonito': {img: 'new-fish/flukebonito.png', width: 90, height: 33}
+  'flukebonito': {img: 'new-fish/flukebonito.png', width: 90, height: 33},
+  'squid': {img: 'new-fish/squid.png', width: 90, height: 33}
 };
 
 const princess: {[key in Fish]: {img: string, height: number, width: number}} = {
@@ -140,7 +144,8 @@ const princess: {[key in Fish]: {img: string, height: number, width: number}} = 
   'seabassling': {img: 'sealingt.png', width: 90, height: 51},
   'striperbonito': {img: 'new-fish/striperbonito.png', width: 90, height: 33},
   'bonito': {img: 'new-fish/bonito.png', width: 90, height: 33},
-  'flukebonito': {img: 'new-fish/flukebonito.png', width: 90, height: 33}
+  'flukebonito': {img: 'new-fish/flukebonito.png', width: 90, height: 33},
+  'squid': {img: 'new-fish/squid.png', width: 90, height: 33}
 };
 
 export const FishToImg = (process.env.VUE_APP_FISHES === 'lauralee') ? lauralee : princess;
