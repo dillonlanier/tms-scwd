@@ -37,7 +37,11 @@ export enum Fish {
   Bonito = 'bonito',
   StriperBonito = 'striperbonito',
   FlukeBonito = 'flukebonito',
-  Squid = 'squid'
+  Squid = 'squid',
+  StriperSquid = 'stripersquid',
+  TempFish = 'tempfish',
+  TempFish2 = 'tempfish2',
+  TempFish3 = 'tempfish3'
 }
 
 const lauraleeDisplay: {[key in Fish]: string} = {
@@ -64,7 +68,11 @@ const lauraleeDisplay: {[key in Fish]: string} = {
   'bonito': 'Bonito',
   'striperbonito': 'StriperBonito',
   'flukebonito': 'FlukeBonito',
-  'squid': 'Squid'
+  'squid': 'Squid',
+  'stripersquid': 'StriperSquid',
+  'tempfish': 'TempFish',
+  'tempfish2': 'TempFish2',
+  'tempfish3': 'TempFish3'
 };
 
 const princessDisplay: {[key in Fish]: string} = {
@@ -91,7 +99,11 @@ const princessDisplay: {[key in Fish]: string} = {
   'bonito': 'Bonito',
   'striperbonito': 'StriperBonito',
   'flukebonito': 'FlukeBonito',
-  'squid': 'Squid'
+  'squid': 'Squid',
+  'stripersquid': 'StriperSquid',
+  'tempfish': 'TempFish',
+  'tempfish2': 'TempFish2',
+  'tempfish3': 'TempFish3'
 };
 
 const lauralee: {[key in Fish]: {img: string, height: number, width: number}} = {
@@ -118,7 +130,12 @@ const lauralee: {[key in Fish]: {img: string, height: number, width: number}} = 
   'striperbonito': {img: 'new-fish/striperbonito.png', width: 90, height: 33},
   'bonito': {img: 'new-fish/bonito.png', width: 90, height: 33},
   'flukebonito': {img: 'new-fish/flukebonito.png', width: 90, height: 33},
-  'squid': {img: 'new-fish/squid.png', width: 90, height: 33}
+  'squid': {img: 'new-fish/squid.png', width: 90, height: 33},
+  'stripersquid': {img: 'new-fish/stripersquid.png', width: 90, height: 33},
+  'tempfish': {img: 'new-fish/tempfish.png', width: 90, height: 33},
+  'tempfish2': {img: 'new-fish/tempfish2.png', width: 90, height: 33},
+  'tempfish3': {img: 'new-fish/tempfish3.png', width: 90, height: 33},
+
 };
 
 const princess: {[key in Fish]: {img: string, height: number, width: number}} = {
@@ -145,7 +162,11 @@ const princess: {[key in Fish]: {img: string, height: number, width: number}} = 
   'striperbonito': {img: 'new-fish/striperbonito.png', width: 90, height: 33},
   'bonito': {img: 'new-fish/bonito.png', width: 90, height: 33},
   'flukebonito': {img: 'new-fish/flukebonito.png', width: 90, height: 33},
-  'squid': {img: 'new-fish/squid.png', width: 90, height: 33}
+  'squid': {img: 'new-fish/squid.png', width: 90, height: 33},
+  'stripersquid': {img: 'new-fish/stripersquid.png', width: 90, height: 33},
+  'tempfish': {img: 'new-fish/tempfish.png', width: 90, height: 33},
+  'tempfish2': {img: 'new-fish/tempfish2.png', width: 90, height: 33},
+  'tempfish3': {img: 'new-fish/tempfish3.png', width: 90, height: 33},
 };
 
 export const FishToImg = (process.env.VUE_APP_FISHES === 'lauralee') ? lauralee : princess;
